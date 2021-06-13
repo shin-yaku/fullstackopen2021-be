@@ -19,6 +19,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   } 
 
   next(error)
@@ -97,53 +99,16 @@ app.post('/api/persons', (request, response, next) => {
       error: "number is missing"
     })
   }
-  Person.find({}).then(persons => {
-    if (persons.filter(p => p.name === body.name).length) {
-      return response.status(400).json({
-        error: "name must be unique"
-      })
-    }
-    const person = new Person({
-      name: body.name,
-      number: body.number
-    })
 
-    person.save().then(savedPerson => {
-      response.json(savedPerson)
-    })
-  }).catch(error => next(error))
-})
-
-app.post("/api/persons", (request, response) => {
-  const body = request.body
-
-  if (!body.name) {
-    return response.status(400).json({
-      error: "name is missing"
-    })
-  }
-  if (!body.number) {
-    return response.status(400).json({
-      error: "number is missing"
-    })
-  }
-  if (persons.filter(p => p.name === body.name).length) {
-    console.log(persons.filter(p => p.name === body.name));
-    return response.status(400).json({
-      error: "name must be unique"
-    })
-  }
-
-  const person = {
-    id: getRandomInt(99999999),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
+  })
 
-  persons = persons.concat(person)
-  console.log(person);
-
-  response.json(persons)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+  .catch(error => next(error))
 })
 
 const PORT = process.env.PORT || 3001
