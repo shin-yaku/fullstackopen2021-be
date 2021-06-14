@@ -23,7 +23,7 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
-  } 
+  }
 
   next(error)
 }
@@ -32,31 +32,31 @@ const errorHandler = (error, request, response, next) => {
 let persons = [
   {
     id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
+    name: 'Arto Hellas',
+    number: '040-123456',
   },
   {
     id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
+    name: 'Ada Lovelace',
+    number: '39-44-5323523',
   },
   {
     id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
+    name: 'Dan Abramov',
+    number: '12-43-234345',
   },
   {
     id: 4,
-    name: "Mary Poppendick",
-    number: "39-23-6423122",
+    name: 'Mary Poppendick',
+    number: '39-23-6423122',
   },
 ]
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response) => {
@@ -71,34 +71,30 @@ app.get('/api/persons/:id', (request, response) => {
     response.json(person)
   } else {
     response.status(400).json({
-      error: "not found"
+      error: 'not found'
     })
   }
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
     return response.status(400).json({
-      error: "name is missing"
+      error: 'name is missing'
     })
   }
   if (!body.number) {
     return response.status(400).json({
-      error: "number is missing"
+      error: 'number is missing'
     })
   }
 
@@ -110,7 +106,7 @@ app.post('/api/persons', (request, response, next) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT || 3001
