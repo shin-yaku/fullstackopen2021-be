@@ -1,7 +1,9 @@
-require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const express = require('express')
 const app = express()
-const Person = require('models/person')
+const Person = require('./models/person')
 
 var morgan = require('morgan')
 app.use(morgan('combined'))
